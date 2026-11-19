@@ -1,13 +1,17 @@
 #!/usr/bin/env bash
 # play_step.sh - play one LIB_HOWTO step on the REAL engine and say what is in the scene.
-#   tests/play_step.sh <step .livecodescript> [updates] [snap.png]
+#   tests/play_step.sh <step .livecodescript> [updates] [snap.png] [call] [expr]
 #   e.g. tests/play_step.sh topics/01_Game_card_and_loop/step_3.livecodescript 60 C:/LIB_MCP/s3.png
+#   [call] "Handler|a|b" is dispatched to the card with "a","b" after the start (commas stay in
+#   one argument: "Hero.TestKeys|119,100"); several are split by ";", 10 updates apart;
+#   [expr] is evaluated on the card at the end and printed (e.g. "Cube.State()"). "-" skips one.
 # Opens the Simple_Test1 game window (game_launch.livecodescript), swaps in the step's card
 # script before the player starts it, lets it run [updates] steps of 33 ms (default 30), then
-# prints: compile result, the scene objects (key, colour, position, rotation), the HUD names,
+# prints: compile result, the scene objects (key, position, rotation), [expr],
 # and any run-time errors from LIB_LLMIN/LIB_DEV/GAME_PLAYER_ERRORS.txt.
 # Writes nothing into LIB_GAMES. Needs LIB_MCP's test standalone (port 8767).
-STEP="$(realpath "$1")"; N="${2:-30}"; SNAP="${3:-}"
+STEP="$(realpath "$1")"; N="${2:-30}"; SNAP="${3:-}"; CALL="${4:-}"; EXPR="${5:-}"
+[[ "$SNAP" == "-" ]] && SNAP=""; [[ "$CALL" == "-" ]] && CALL=""
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 LCMCP="$ROOT/LIB_MCP/tools/lcmcp"
 ERRS="$ROOT/LIB_LLMIN/LIB_DEV/GAME_PLAYER_ERRORS.txt"
@@ -30,13 +34,24 @@ put "compile: " & the result & cr into tLog
 set the uPrefix of stack tS to empty
 set the title of stack tS to "127.0.0.1:8767 | CLAUDE | howto step"
 if there is a field "PlayerMessage" of stack tS then hide field "PlayerMessage" of stack tS
-wait (100 + $N * 33) milliseconds with messages
+wait 150 milliseconds with messages
+LC
+IFS=';' read -ra CALLS <<< "$CALL"
+for c in "${CALLS[@]}"; do      # each "Handler|a|b": dispatched with "a","b"; 10 updates apart
+  args="${c#*|}"; [[ "$c" != *"|"* ]] && args=""
+  q=""; [[ -n "$args" ]] && q=" with \"${args//|/\",\"}\""
+  echo "dispatch \"${c%%|*}\" to card 1 of stack tS$q"
+  echo "wait 330 milliseconds with messages"
+done
+cat <<LC
+wait ($N * 33) milliseconds with messages
 put "objects: " & the number of lines of gSceneObjects & cr after tLog
 repeat for each line tL in gSceneObjects
   put word 2 of tL into tK
-  put "  " & tK && gObjectTransforms[tK]["color"] && "at" && round(gObjectTransforms[tK]["x"]) & "," & round(gObjectTransforms[tK]["y"]) & "," & round(gObjectTransforms[tK]["z"]) && "rot" && round(gObjectTransforms[tK]["rotX"],2) & "," & round(gObjectTransforms[tK]["rotY"],2) & "," & round(gObjectTransforms[tK]["rotZ"],2) & cr after tLog
+  put "  " & tK && "at" && round(gObjectTransforms[tK]["x"]) & "," & round(gObjectTransforms[tK]["y"]) & "," & round(gObjectTransforms[tK]["z"]) && "rot" && round(gObjectTransforms[tK]["rotX"],2) & "," & round(gObjectTransforms[tK]["rotY"],2) & "," & round(gObjectTransforms[tK]["rotZ"],2) & cr after tLog
 end repeat
 LC
+[[ -n "$EXPR" ]] && echo "put \"expr: \" & value(\"$EXPR\", card 1 of stack tS) & cr after tLog"
 [[ -n "$SNAP" ]] && echo "export snapshot from card 1 of stack tS to file \"$SNAP\" as PNG"
 cat <<LC
 close stack tS
