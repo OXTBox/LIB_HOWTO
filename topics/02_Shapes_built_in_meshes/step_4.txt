@@ -1,0 +1,3 @@
+Title: Adding pyramid and prism shapes
+Makes this happen: The script defines two new built-in shapes and spawns them in the row so the shapes complete the scene.
+Look for: A four-sided pyramid and a six-sided prism standing beside the existing shapes on the grid floor.

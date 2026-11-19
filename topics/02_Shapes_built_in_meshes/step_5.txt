@@ -1,0 +1,3 @@
+Title: Changing the mesh numbers
+Makes this happen: You replace the old mesh settings with smaller ring and side counts, so the ball becomes a cruder, faceted shape with fewer lines.
+Look for: The orange ball now shows a rough, faceted shape with fewer visible rings and sides than before.

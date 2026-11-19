@@ -1,0 +1,3 @@
+Title: A box on the floor
+Makes this happen: The script sets up a box mesh and spawns it in the scene at the chosen position.
+Look for: A cyan cube standing on the floor, left of centre.

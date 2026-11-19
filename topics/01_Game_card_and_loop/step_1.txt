@@ -1,0 +1,3 @@
+Title: Empty game card setup
+Makes this happen: The engine sends Game.OnStart to the card when you press Play, and the handler resets the camera, clears leftover objects, and clears leftover words.
+Look for: The viewport stays empty and nothing goes wrong while the game runs.

@@ -1,0 +1,3 @@
+Title: Adding a shape to the scene
+Makes this happen: The handler starts the game, clears the old screen, defines a cube shape, and spawns it in the middle of the view.
+Look for: A cyan wire cube sits in the center of the screen.
