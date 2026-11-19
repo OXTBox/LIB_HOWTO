@@ -71,15 +71,13 @@ end openStack
 
 -- LIB_ALPHA 12b: closing frees the stack; the game windows go with it
 on closeStackRequest
-   HT.Stop
-   HT.CloseXt3d
+   HT.CloseWindows
    set the destroyStack of me to true
    pass closeStackRequest
 end closeStackRequest
 
 on closeStack
-   HT.Stop
-   HT.CloseXt3d
+   HT.CloseWindows
    pass closeStack
 end closeStack
 
@@ -231,8 +229,8 @@ end HT.ShowTopic
 command HT.GoStep pStep
    if sSteps < 1 then exit HT.GoStep
    if pStep < 1 or pStep > sSteps then exit HT.GoStep
-   HT.Stop
    put pStep into sStep
+   HT.Stop     -- after sStep: the halted windows name the new step
    set the hilitedLine of field "Steps" of card 1 of me to sStep
    set the cTopic of me to sTopic
    set the cStep of me to sStep
@@ -452,6 +450,20 @@ command HT.RunStep
       HT.RunXt3d
       exit HT.RunStep
    end if
+   -- the window is open (halted): the step's script goes into it and it starts again, where it is
+   if HT.PlayOpen() then
+      set the script of card 1 of stack kPlay to tScript
+      if the result is not empty then
+         put the result into tErr
+         HT.Status "This step does not compile:" && tErr
+         exit HT.RunStep
+      end if
+      set the uGame of stack kPlay to "HOWTO" && sTopic & "." & sStep
+      set the title of stack kPlay to "FOR OWNER | HOWTO step" && sStep && "| Vibecode3D"
+      dispatch "Player.Start" to stack kPlay
+      HT.Status "Step" && sStep && "plays in Vibecode3D (left). Stop ends it."
+      exit HT.RunStep
+   end if
    try
       if not ("GameLaunch" is among the lines of the stacksInUse) then start using stack (tP & "/LIB_DEV/livecode/game_launch.livecodescript")
    catch tErr
@@ -478,24 +490,36 @@ command HT.RunStep
    HT.Status "Step" && sStep && "plays in Vibecode3D (left). Stop ends it."
 end HT.RunStep
 
+-- Stop, another step or topic: the games end, their windows stay where they are
 command HT.Stop
    HT.StopEngine "Vibecode3D"
    HT.StopEngine "xt3d"
 end HT.Stop
 
 command HT.StopEngine pEngine
+   local tText
+   put "Step" && sStep && "- Run this step plays it" into tText
    if pEngine is "Vibecode3D" then
-      if there is a stack kPlay then
-         if the mode of stack kPlay is not 0 then close stack kPlay
+      if HT.PlayOpen() then
+         dispatch "Player.Halt" to stack kPlay with tText
       end if
-   else if sXt3dOn is true then
+   else if HT.Xt3dOpen() then
       put false into sXt3dOn
-      if HT.Xt3dOpen() then
-         dispatch "xbStopGame" to stack kBenchStack
-         hide stack kBenchStack
-      end if
+      dispatch "xbStopGame" to stack kBenchStack
    end if
 end HT.StopEngine
+
+function HT.PlayOpen
+   if there is not a stack kPlay then return false
+   return the mode of stack kPlay is not 0
+end HT.PlayOpen
+
+-- the HOWTO stack closes: both game windows (and raylib) go with it
+command HT.CloseWindows
+   if HT.PlayOpen() then close stack kPlay
+   if HT.Xt3dOpen() then close stack kBenchStack
+   put false into sXt3dOn
+end HT.CloseWindows
 
 -------------------------------------------------------------------- running a step in xt3d
 
@@ -531,7 +555,6 @@ command HT.RunXt3d
    put the result into tErr
    if tErr is not empty then
       HT.Status "xt3d:" && tName && "did not start:" && line 1 of tErr
-      hide stack kBenchStack
       exit HT.RunXt3d
    end if
    put true into sXt3dOn
@@ -546,10 +569,6 @@ function HT.Xt3dOpen
    return the cViewOnly of stack kBenchStack is true
 end HT.Xt3dOpen
 
--- the HOWTO stack closes: the xt3d view (and raylib) go with it
-command HT.CloseXt3d
-   if HT.Xt3dOpen() then close stack kBenchStack
-end HT.CloseXt3d
 
 -------------------------------------------------------------------- small helpers
 
