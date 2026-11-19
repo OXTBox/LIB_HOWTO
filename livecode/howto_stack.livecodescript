@@ -40,6 +40,9 @@ local sDefined     -- handler names the shown script defines (cr list)
 
 on preOpenStack
    if there is not a field "Code" of card 1 of me then HT.Build
+   -- owner, 19 Nov: big apps open at 200,32 at 0.95 scale, clear of the taskbar on 1536 x 864
+   set the scaleFactor of me to 0.95
+   set the topLeft of me to 200, 32
    if sEngine is empty then put "Vibecode3D" into sEngine
    HT.ShowEngine
    HT.LoadTopics
@@ -422,11 +425,15 @@ end HT.Hex
 -------------------------------------------------------------------- running a step
 
 -- the viewport's rect in screen pixels
+-- (the stack's scaleFactor shrinks it on screen: scale the card's offsets too)
 function HT.ViewportOnScreen
-   local tR, tS
+   local tR, tS, tK
    put the rect of graphic "Viewport" of card 1 of me into tR
    put the rect of me into tS
-   return item 1 of tS + item 1 of tR + 1, item 2 of tS + item 2 of tR + 1, item 1 of tS + item 3 of tR - 1, item 2 of tS + item 4 of tR - 1
+   put the scaleFactor of me into tK
+   if tK is not a number then put 1 into tK
+   return item 1 of tS + round((item 1 of tR + 1) * tK), item 2 of tS + round((item 2 of tR + 1) * tK), \
+         item 1 of tS + round((item 3 of tR - 1) * tK), item 2 of tS + round((item 4 of tR - 1) * tK)
 end HT.ViewportOnScreen
 
 command HT.RunStep
