@@ -1,0 +1,3 @@
+Title: Growing the ball step by step
+Makes this happen: every 30 updates, the ball gets a little larger, and a new ball replaces the old one.
+Look for: The green ball grows a step every second until its radius is 60.

@@ -1,0 +1,3 @@
+Title: Building a house outline
+Makes this happen: The script adds four points and four lines to make a square under the triangle, then turns the whole shape into a wire house outline.
+Look for: A yellow wire shape showing the triangle roof with a square base.

@@ -1,0 +1,3 @@
+Title: Giving the keys to the game
+Makes this happen: In Game.OnStart, the program focuses on nothing so the arrow keys stay with the game instead of opening menus or moving a field cursor, and an empty arrowKey handler is added.
+Look for: The game starts and the arrow keys work for moving the cube without opening any menus.

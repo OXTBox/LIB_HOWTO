@@ -1,0 +1,3 @@
+Title: Pause the game with a PAUSED note
+Makes this happen: pressing Escape triggers the pause handler, which shows a PAUSED label, and resuming removes that label.
+Look for: a PAUSED label appearing on the screen after pressing Escape.

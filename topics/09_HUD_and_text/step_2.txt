@@ -1,0 +1,3 @@
+Title: Make the score count
+Makes this happen: every 30 updates, the score increases by one, and the score text in the HUD is updated to show the new value.
+Look for: the score in the HUD rises once each second.

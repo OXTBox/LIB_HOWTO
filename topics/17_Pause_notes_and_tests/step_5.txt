@@ -1,0 +1,3 @@
+Title: Run the game without a window
+Makes this happen: the test script holds the chosen keys for the requested steps and prints the game state after each step so errors appear right away.
+Look for: the game state printed after each step, with any errors shown immediately.

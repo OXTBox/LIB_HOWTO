@@ -1,0 +1,3 @@
+Title: Run the game in the xt3d bench
+Makes this happen: Nothing changes in the script: open the same game in the xt3d bench.
+Look for: The same spinning cube in xt3d: check its speed and that the labels line up.

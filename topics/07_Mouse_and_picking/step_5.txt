@@ -1,0 +1,3 @@
+Title: Pick the rock under the mouse
+Makes this happen: mouseMove sends the mouse position to Rock.Hover, which turns it into a ray (ScreenToCameraRay) and asks RayCastScene which rock the ray meets first.
+Look for: A yellow arrow floats over the rock under the mouse, before you fire.

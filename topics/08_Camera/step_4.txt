@@ -1,0 +1,3 @@
+Title: Turn around the scene with the camera
+Makes this happen: Each update the camera slowly circles the scene, keeping the view swinging around the center.
+Look for: The scene stays fixed while the camera moves in a slow circle around it.

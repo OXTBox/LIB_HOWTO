@@ -1,0 +1,3 @@
+Title: Move the cube with D or the right arrow
+Makes this happen: the game reads the keys held down, and if D or the right arrow is pressed, the cube moves three units to the right.
+Look for: the cube shifting to the right when you hold D or the right arrow key.

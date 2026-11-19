@@ -1,0 +1,3 @@
+Title: No files, no crash
+Makes this happen: The game still runs without any sound folder, and the sound call does nothing when a sound type has no files.
+Look for: The ball bounces off the left block with no sound and no error.

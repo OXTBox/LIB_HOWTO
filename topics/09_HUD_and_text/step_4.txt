@@ -1,0 +1,3 @@
+Title: A message that goes away
+Makes this happen: HUD.Set shows GET READY at the start; after 60 updates HUD.Remove takes it away.
+Look for: GET READY appears on the screen and disappears after two seconds.

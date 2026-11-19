@@ -1,0 +1,3 @@
+Title: Let the engine spin the cube
+Makes this happen: We set a rotation speed for the cube once, so it turns while it moves without extra turning code.
+Look for: The cube keeps turning as it slides across the scene.

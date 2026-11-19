@@ -1,0 +1,3 @@
+Title: Remove one cube from the scene
+Makes this happen: The game counts updates, and after 60 updates it removes the middle cube from the scene.
+Look for: The scene shows four cubes, with the middle one gone after two seconds.

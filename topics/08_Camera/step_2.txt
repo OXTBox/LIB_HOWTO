@@ -1,0 +1,3 @@
+Title: Tilting the camera down
+Makes this happen: The code sets the camera's tilt value so the view turns downward toward the middle of the scene.
+Look for: The scene appears centered in the view with the camera looking down at the middle of the scene.

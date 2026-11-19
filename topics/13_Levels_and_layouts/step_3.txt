@@ -1,0 +1,3 @@
+Title: Building a maze from a seed
+Makes this happen: The new handler starts the needed libraries and fills the grid variable with a maze made from the chosen seed.
+Look for: MAZE 13 X 13  SEED 1 on the HUD; no maze is drawn yet.

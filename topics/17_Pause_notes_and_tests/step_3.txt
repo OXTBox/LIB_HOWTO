@@ -1,0 +1,3 @@
+Title: Add notes while playing the game
+Makes this happen: Nothing in the game: LIB_GAMES' GameNotes front script opens a note box on ` or F2 and saves your note with the game's State line.
+Look for: Press ` or F2 while playing: a note box appears.

@@ -1,0 +1,3 @@
+Title: Spin a gem without bones
+Makes this happen: the gem starts turning slowly and keeps moving in that way.
+Look for: a gem that rotates gently on the screen.

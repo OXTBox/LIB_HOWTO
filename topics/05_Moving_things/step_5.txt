@@ -1,0 +1,3 @@
+Title: Reading the cube's position
+Makes this happen: GetObjectPosition reads the drifting cube's Z (how far away it is), and HUD.Set shows it.
+Look for: The Z number on the HUD counts up as the orange cube drifts away.

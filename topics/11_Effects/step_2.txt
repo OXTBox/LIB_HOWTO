@@ -1,0 +1,3 @@
+Title: Sparks burst when Space is pressed
+Makes this happen: Pressing the Space key makes the cube burst with orange sparks at its current position.
+Look for: The cube shows a burst of orange sparks every time you tap Space.

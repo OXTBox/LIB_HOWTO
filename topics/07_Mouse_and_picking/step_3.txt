@@ -1,0 +1,3 @@
+Title: Fire at the rock with a click
+Makes this happen: When you click, the game sends the click position to the weapon, which shoots a laser from where you clicked.
+Look for: A laser from your click: a rock hit once sparks white, a rock hit twice is blasted away.

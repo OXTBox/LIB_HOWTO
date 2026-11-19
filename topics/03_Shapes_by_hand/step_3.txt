@@ -1,0 +1,3 @@
+Title: Building a triangle by hand
+Makes this happen: We add three points to the mesh, connect them with three lines, and define the triangle as a new shape.
+Look for: A yellow wire triangle stands in the middle of the view.

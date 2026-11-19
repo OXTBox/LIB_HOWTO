@@ -1,0 +1,3 @@
+Title: Walk and stand the stick figure
+Makes this happen: The script picks an idle clip for still movement and switches to the walking clip when you press W, then moves the figure across the floor.
+Look for: The figure stands still with gentle fidgeting, then walks across the floor when you press W.

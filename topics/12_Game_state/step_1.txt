@@ -1,0 +1,3 @@
+Title: Setting up the game numbers
+Makes this happen: The game starts with a score of 0, three lives, and level 1, then shows these values in the top area of the screen.
+Look for: SCORE 0  LIVES 3  LEVEL 1 displayed at the top of the screen.

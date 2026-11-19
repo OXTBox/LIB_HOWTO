@@ -1,0 +1,3 @@
+Title: Adding a face and turning the house
+Makes this happen: The square face is added to the shape, and the house is set to rotate slowly so it shows from the side.
+Look for: The flat house turns slowly and looks almost gone when viewed from the side.

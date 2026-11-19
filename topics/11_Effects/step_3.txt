@@ -1,0 +1,3 @@
+Title: Destroy the cube
+Makes this happen: Return calls Fx.Blast: FX.Destroy blasts the cube away in de-rez dashes, and a new cube comes back a second later.
+Look for: Press Return: the cube breaks into dashes that thin out and fade, then a new cube appears.

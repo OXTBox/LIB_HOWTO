@@ -1,0 +1,3 @@
+Title: Positioning HUD from the view edges
+Makes this happen: The start handler resets the scene, spawns the spinning cube, and sets the HUD text positions using the view edge values instead of fixed numbers.
+Look for: The spinning cube in the center with the title and help text placed correctly in both windows.

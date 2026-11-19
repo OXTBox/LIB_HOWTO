@@ -1,0 +1,3 @@
+Title: Bob a Buoy for Animation
+Makes this happen: The code sets the bobbing settings for the buoy so it rises, falls, and rocks gently.
+Look for: The buoy moves up and down with a soft rocking motion.

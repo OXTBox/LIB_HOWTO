@@ -1,0 +1,3 @@
+Title: Walking without skating
+Makes this happen: The update handler moves the figure forward by the clip's walking speed, turns it to face the right, and shows the next frame of the clip so the walk keeps going.
+Look for: A stick figure walking across the floor with its feet staying planted.

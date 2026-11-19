@@ -1,0 +1,3 @@
+Title: Change shape with more sides
+Makes this happen: Each time the ball grows it also gets two more sides, so a crude shape becomes a round ball.
+Look for: A green ball that starts crude and gets rounder as it grows.

@@ -1,0 +1,3 @@
+Title: Keys steer the game in both engines
+Makes this happen: focus on nothing and an empty arrowKey handler keep the keys with the game in both engines.
+Look for: The arrow keys open no menu and change no card.

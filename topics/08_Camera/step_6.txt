@@ -1,0 +1,3 @@
+Title: Smooth the camera movement
+Makes this happen: The camera moves only a small part of the way toward its target each update, so it glides after the hero instead of snapping into place.
+Look for: The camera glides after the cube as you steer it, instead of jumping.

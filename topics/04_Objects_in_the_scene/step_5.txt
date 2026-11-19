@@ -1,0 +1,3 @@
+Title: Count the cubes in the scene
+Makes this happen: The game counts how many cubes are currently in the scene and shows that number on the HUD.
+Look for: The HUD displays the number of cubes, starting at five and dropping to four.

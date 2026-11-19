@@ -1,0 +1,3 @@
+Title: A test hook for the game
+Makes this happen: The test hook stores held keys so the game can use them instead of the real keyboard, and the keys call reads those stored keys.
+Look for: You still drive it with the keyboard; a test can now hold keys for it.
