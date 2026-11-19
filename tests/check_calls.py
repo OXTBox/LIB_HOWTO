@@ -25,6 +25,14 @@ def defs(path):
 
 def main():
     e1, e2 = defs(ENG1), defs(ENG2)
+    # Game.FindFile: in the Game Player and the xt3d bench (both run the generated engine), and
+    # every LIB_GAMES game finds its files with it; the Engine 1 editor stack keeps libraries on cards.
+    allowed = {'Game.FindFile'}
+    # library calls (a step loads the library with start using): checked against the library files
+    libs = set()
+    for lib in ('LIB_BIT/livecode/lib_bit.livecodescript', 'LIB_MAP/livecode/lib_map.livecodescript',
+                'LIB_BIT/editor/livecode/lib_cellmap.livecodescript'):
+        libs |= defs(os.path.join(ROOT, lib))
     hooks = {'Game.OnStart', 'Game.OnUpdate', 'Game.OnStop', 'Game.OnClick', 'Game.OnKill',
              'Game.OnPause', 'Game.OnResume', 'Collision.Hit'}
     dirs = sys.argv[1:] or sorted(glob.glob(os.path.join(HERE, '..', 'topics', '[0-9][0-9]_*')))
@@ -35,7 +43,7 @@ def main():
             code = '\n'.join(l.split('--')[0] for l in text.splitlines())   # not in comments
             code = re.sub(r'"[^"\n]*"', '""', code)                              # not in strings
             own = set(DEF.findall(text))
-            for name in sorted(set(CALL.findall(code)) - own - hooks):
+            for name in sorted(set(CALL.findall(code)) - own - hooks - allowed - libs):
                 where = 'missing in BOTH engines' if name not in e2 else 'only in the generated (xt3d / Game Player) engine'
                 if name not in e1:
                     print('%s: %s %s' % (os.path.relpath(f, os.path.join(HERE, '..')), name, where))
