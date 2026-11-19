@@ -1,0 +1,3 @@
+Title: Setting up a level table
+Makes this happen: The Level.Table handler returns one line of numbers for each level, and Level.Start reads that line to build the level.
+Look for: The first level appears with its cubes, speeds, and colours set correctly.

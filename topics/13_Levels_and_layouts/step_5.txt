@@ -1,0 +1,3 @@
+Title: The same maze every time
+Makes this happen: clicking the game adds one to the maze seed and builds a new maze, so seed one stays the same while later seeds change.
+Look for: Click: a new maze, SEED 2. Play again: seed 1 is the same maze as before.

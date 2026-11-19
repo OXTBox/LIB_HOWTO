@@ -1,0 +1,3 @@
+Title: Put the objects into groups
+Makes this happen: We assign a group name and a touch distance to the ball and the block so their collision rules can be set later.
+Look for: Nothing changes: the ball still rolls straight through the block. Groups alone do not collide.

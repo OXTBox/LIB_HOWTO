@@ -1,0 +1,3 @@
+Title: Hand-drawn maze levels
+Makes this happen: Maze.FromFile reads a maze painted in LIB_BIT's BitEditor (a .cellmap) and the same wall code draws it.
+Look for: A maze from the map file on screen; a click shows the next file.

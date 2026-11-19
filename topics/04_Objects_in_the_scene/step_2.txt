@@ -1,0 +1,3 @@
+Title: Spawning five cubes in a row
+Makes this happen: A repeat runs five times, creating one cube each time and storing each cube's key in the sCubes array.
+Look for: Five cyan cubes arranged in a row across the scene.

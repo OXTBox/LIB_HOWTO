@@ -1,0 +1,3 @@
+Title: Loading the motion capture clip file
+Makes this happen: The Clip.Read handler reads the clip file, stores its header details and every frame of joint positions into the clip variable.
+Look for: Nothing visible on screen yet, with the clip details shown in the HUD.

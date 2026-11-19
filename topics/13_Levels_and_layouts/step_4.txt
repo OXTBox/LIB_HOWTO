@@ -1,0 +1,3 @@
+Title: Building the maze on screen
+Makes this happen: the maze walls are turned into a wire mesh and added to the scene, then the camera is set high above it.
+Look for: A blue wire maze, seen from high above.

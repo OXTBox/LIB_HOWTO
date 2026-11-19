@@ -1,0 +1,3 @@
+Title: Play again after game over
+Makes this happen: When the game is over and Space is pressed after thirty updates, the game starts fresh with a short wait to avoid skipping the message.
+Look for: A new game begins with the score, lives, and level reset to their starting values.

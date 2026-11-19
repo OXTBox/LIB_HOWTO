@@ -1,0 +1,3 @@
+Title: Move the cube by hand every step
+Makes this happen: The update handler adds two to the cube's horizontal position and moves the cube to that new spot.
+Look for: The cube slides to the right across the screen.

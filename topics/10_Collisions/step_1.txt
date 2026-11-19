@@ -1,0 +1,3 @@
+Title: Setting up a collision course
+Makes this happen: We place a block and a ball so the ball moves toward the block with a steady rightward speed.
+Look for: The ball rolls steadily from the left toward the block on the screen.

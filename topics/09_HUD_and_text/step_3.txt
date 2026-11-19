@@ -1,0 +1,3 @@
+Title: Add help text at the bottom
+Makes this happen: HUD.Set puts a smaller line of help near the bottom of the view, measured from gViewBottom.
+Look for: A short help text showing the arrow and space controls sitting at the bottom of the screen.

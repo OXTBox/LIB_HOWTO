@@ -1,0 +1,3 @@
+Title: The loop for the turning cube
+Makes this happen: the engine calls the update handler about 30 times each second, and each call adds a small amount to the angle while rotating the cube around the up-down axis.
+Look for: the cyan cube slowly turns on screen.

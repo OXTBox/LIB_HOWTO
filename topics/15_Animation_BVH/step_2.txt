@@ -1,0 +1,3 @@
+Title: Building a single walking pose frame
+Makes this happen: The script reads one frame from the motion capture clip and turns each joint into a point and every connection into a line, so the stick figure stands in the scene.
+Look for: A white stick figure standing upright on the green floor.

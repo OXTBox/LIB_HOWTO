@@ -1,0 +1,3 @@
+Title: Debris instead for explosions
+Makes this happen: Setting the explode option to debris makes the next cube burst into flying edge pieces when it is destroyed.
+Look for: The cube breaks into flying pieces instead of disappearing.

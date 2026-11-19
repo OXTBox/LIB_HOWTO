@@ -1,0 +1,3 @@
+Title: Follow the hero with the camera
+Makes this happen: every update the camera moves behind the steered cube and the engine keeps the view aligned with the hero.
+Look for: a third-person view that stays behind the cube as you steer it with the keys.

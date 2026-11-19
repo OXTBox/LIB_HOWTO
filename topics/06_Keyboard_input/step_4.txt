@@ -1,0 +1,3 @@
+Title: Space changes the cube colour once
+Makes this happen: When the space key goes down, the cube changes colour only for that single press, and the key flag keeps track of whether it has already been pressed.
+Look for: The cube keeps its current position and colour until you press space, then it swaps to the next colour in the list.

@@ -1,0 +1,3 @@
+Title: React to the ball collision
+Makes this happen: when the ball touches the block, the screen shows spark particles and the ball moves back.
+Look for: a block with white spark particles around it and the ball rolling back toward the left.

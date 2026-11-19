@@ -1,0 +1,3 @@
+Title: Every pose ready for the stick figure
+Makes this happen: The code reads the walk clip and creates one mesh for each frame of the walk cycle, so every pose is stored and ready to show.
+Look for: Still one figure standing; the HUD says how many poses are ready.

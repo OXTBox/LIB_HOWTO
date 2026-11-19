@@ -1,0 +1,3 @@
+Title: View from above
+Makes this happen: The engine moves the camera high up and closer, and the camera pitch is set to a steep downward angle.
+Look for: A steep top-down view of the whole floor with the scene around the center point.

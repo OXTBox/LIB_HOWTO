@@ -1,0 +1,3 @@
+Title: Let the engine move the cube
+Makes this happen: We add a second orange cube and set its movement speed so the engine carries it away from you on its own.
+Look for: The first cyan cube keeps moving right, while the second orange cube drifts away from you.

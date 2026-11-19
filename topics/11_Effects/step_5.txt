@@ -1,0 +1,3 @@
+Title: Starting a clean game effect
+Makes this happen: The game resets the camera, scene, particles, and HUD so no leftover effects from the previous game remain.
+Look for: A fresh game with no leftover sparks or debris from the last play.

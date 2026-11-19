@@ -1,0 +1,3 @@
+Title: Creating an empty mesh
+Makes this happen: The script starts the game and creates a new, empty mesh to build the shape on.
+Look for: Nothing visible on the screen yet, since the mesh has no points or lines yet.

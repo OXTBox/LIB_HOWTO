@@ -1,0 +1,3 @@
+Title: Over: won or lost
+Makes this happen: When the game ends, the code sets the over and win flags, stops the play loop, and shows YOU WIN or GAME OVER on the screen.
+Look for: The game freezes with YOU WIN if you cleared the last level or GAME OVER if your lives reach zero.

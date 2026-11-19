@@ -1,0 +1,3 @@
+Title: Create five clickable rocks
+Makes this happen: The game starts by clearing the scene and spawns five grey rocks in random places, each with two hit points stored in the object data.
+Look for: Five scattered grey rocks on the screen, each able to take two hits before being destroyed.

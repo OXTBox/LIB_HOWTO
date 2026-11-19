@@ -1,0 +1,3 @@
+Title: A test hook for the cube
+Makes this happen: Cube.TestKeys stores keys a test wants held; Cube.Keys() gives those, or the real keys when there are none. Cube.State() says where the cube is.
+Look for: Nothing changes when you play; a test can now drive the cube (topic 17).

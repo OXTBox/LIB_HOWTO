@@ -1,0 +1,3 @@
+Title: Adding words to the screen
+Makes this happen: HUD.Set puts a line of words on screen: its name, the text, where it goes (x, y in pixels) and how big it is.
+Look for: The title text appears below the engine's top bars.

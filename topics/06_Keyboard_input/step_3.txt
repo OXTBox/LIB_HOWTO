@@ -1,0 +1,3 @@
+Title: All four directions for the cube
+Makes this happen: The game checks the held keys and moves the cube three units in the direction you choose with the arrow keys or WASD.
+Look for: The cube moves in the direction of the keys you press, following the WASD or arrow key directions.

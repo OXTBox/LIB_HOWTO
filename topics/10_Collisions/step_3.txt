@@ -1,0 +1,3 @@
+Title: Setting up collision rules
+Makes this happen: The script clears any old collision rules and adds a new rule so the engine checks the ball and block groups every update.
+Look for: The ball still rolls through: the engine now checks for the touch, but nothing answers it yet.

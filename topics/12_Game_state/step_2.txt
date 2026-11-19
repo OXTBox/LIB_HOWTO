@@ -1,0 +1,3 @@
+Title: Changing game state during play
+Makes this happen: When you catch a gem, it adds to your score and a hazard takes a life, so the numbers update while you play.
+Look for: The score, lives, and level numbers on the screen move as you play.

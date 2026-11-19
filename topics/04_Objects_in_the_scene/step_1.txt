@@ -1,0 +1,3 @@
+Title: Keeping the key for a cube
+Makes this happen: Add a cube 600 units ahead of the camera, and store its key in sCube so you can reach it later.
+Look for: A cyan cube appears in the scene, and sCube holds its key.

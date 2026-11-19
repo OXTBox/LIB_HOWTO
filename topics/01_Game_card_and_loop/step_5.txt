@@ -1,0 +1,3 @@
+Title: Clean up when the game stops
+Makes this happen: The engine sends Game.OnStop when you press Stop or pick another game, and this handler clears the old title so nothing stays on screen.
+Look for: The screen shows no leftover title after pressing Stop before starting a new game.

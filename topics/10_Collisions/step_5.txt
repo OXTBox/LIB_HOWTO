@@ -1,0 +1,3 @@
+Title: The simple distance check method
+Makes this happen: In the game update handler, the program checks if the ball is close to the block and makes the ball bounce back when it touches it.
+Look for: A ball rolling toward the cyan block, which bounces back when it gets close to the block.

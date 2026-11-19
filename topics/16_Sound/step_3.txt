@@ -1,0 +1,3 @@
+Title: Play a sound on an event
+Makes this happen: when the ball hits a block, the game plays the zap sound from the sound folder.
+Look for: A zap each time the ball touches the right block (silent in the Game Player for now: ISSUES 0013).

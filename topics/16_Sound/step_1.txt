@@ -1,0 +1,3 @@
+Title: Setting up sound file folders
+Makes this happen: The engine looks for sound files inside a folder named after each sound type, so it can find the zap sounds when they are needed.
+Look for: The screen shows the location of the sound folder in the engine's sounds folder.

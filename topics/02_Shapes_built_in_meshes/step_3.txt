@@ -1,0 +1,3 @@
+Title: Adding a ball to the scene
+Makes this happen: the code defines a new ball mesh and spawns it at a fixed position with an orange color.
+Look for: an orange wire ball standing next to the cube on the grid floor.

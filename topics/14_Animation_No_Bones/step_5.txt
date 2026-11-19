@@ -1,0 +1,3 @@
+Title: Flip-book wing animation
+Makes this happen: The script creates eight wing shapes and swaps the current one every other update so the wing flaps in a flip-book style.
+Look for: A yellow wing that flaps back and forth across its eight flap frames.

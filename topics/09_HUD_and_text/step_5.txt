@@ -1,0 +1,3 @@
+Title: Only redraw the HUD when it changes
+Makes this happen: The ShowHUD handler checks the saved text first, and only updates the score text if it is different from what was shown before.
+Look for: The same screen as before: the score text is only rebuilt when the score changes.

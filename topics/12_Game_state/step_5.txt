@@ -1,0 +1,3 @@
+Title: One line for game state
+Makes this happen: The new State handler returns the game's level, score, lives, and win or loss status as a single readable string.
+Look for: Nothing new on screen: notes and tests can ask Catch.State() and get a line like 1|0|3|false.

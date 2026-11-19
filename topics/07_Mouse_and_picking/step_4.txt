@@ -1,0 +1,3 @@
+Title: Know what was hit
+Makes this happen: When the engine tells you a rock was destroyed, the score increases and orange sparks appear at the rock's position.
+Look for: The score on the screen rises and orange sparks show where the rock was.

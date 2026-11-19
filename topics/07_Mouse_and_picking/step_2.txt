@@ -1,0 +1,3 @@
+Title: Show where you clicked
+Makes this happen: The new click handler records the screen position of every click and shows it in the HUD.
+Look for: A small text box in the upper area of the screen with the clicked position, separated by a comma.

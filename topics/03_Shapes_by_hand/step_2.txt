@@ -1,0 +1,3 @@
+Title: Adding three points to the mesh
+Makes this happen: The script creates a new mesh and adds three points to it, each point placed at a specific position.
+Look for: Nothing new on screen: points alone draw nothing.

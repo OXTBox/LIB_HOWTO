@@ -1,0 +1,3 @@
+Title: Giving cubes different colours
+Makes this happen: The script spawns five cubes, each with its own chosen colour.
+Look for: Five cubes standing in a row, each showing a different colour.

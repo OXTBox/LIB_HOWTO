@@ -1,0 +1,3 @@
+Title: Setting the camera position
+Makes this happen: The game starts the scene, builds the floor and colored cubes, and places the camera 400 units back and 120 units up so the scene is visible from that angle.
+Look for: The floor and the four colored cubes arranged in a grid, seen from in front and slightly above the scene.
