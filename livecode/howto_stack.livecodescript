@@ -14,6 +14,11 @@ script "howto_stack"
 
 constant kFallbackProjects = "//wsl$/Ubuntu/home/igame3d/projects"
 constant kPlay = "Play Simple_Test1"
+-- the xt3d games bench (xRay): LIB_MCP inside it on port 8770 (LIB_PORTS: xt3d-bench-mcp)
+constant kBenchExe = "xt3D_Raylib_Livecode_Bridge/standalone/xt3d_Bench_LibMCP/xt3d_Bench_LibMCP.exe"
+constant kBenchScript = "xt3D_Raylib_Livecode_Bridge/testbench/xt3d_testBench_lib_mcp.livecodescript"
+constant kBenchStack = "xt3dTestBenchLibMCP"
+constant kBenchPort = 8770
 constant kW = 1280
 constant kH = 840
 constant kLeftW = 250
@@ -35,6 +40,8 @@ local sStep        -- the chosen step number
 local sSteps       -- how many steps the chosen topic has
 local sEngine      -- "Vibecode3D" or "xt3d"
 local sDefined     -- handler names the shown script defines (cr list)
+local sXt3dOn      -- true while a step plays in the xt3d games bench
+local sHttp        -- open requests to the bench, by socket
 
 -------------------------------------------------------------------- open / close
 
@@ -440,13 +447,14 @@ command HT.RunStep
    local tP, tWhy, tScript, tErr
    if sSteps < 1 then exit HT.RunStep
    HT.Stop
-   if sEngine is "xt3d" then
-      HT.Status "xt3d: not wired into this stack yet; running it in Vibecode3D."
-   end if
    put HT.Projects() into tP
    put HT.ReadText(HT.StepFile(sStep, ".livecodescript")) into tScript
    if tScript is empty then
       HT.Status "No step file:" && HT.StepFile(sStep, ".livecodescript")
+      exit HT.RunStep
+   end if
+   if sEngine is "xt3d" then
+      HT.RunXt3d
       exit HT.RunStep
    end if
    try
@@ -481,7 +489,170 @@ command HT.Stop
    if there is a stack kPlay then
       if the mode of stack kPlay is not 0 then close stack kPlay
    end if
+   if sXt3dOn is true then
+      put false into sXt3dOn
+      if HT.BenchAlive() then get HT.Bench("POST", "/run", "xbStopGame", 3000)
+   end if
 end HT.Stop
+
+-------------------------------------------------------------------- running a step in xt3d
+
+-- the step file is played by the xt3d games bench (its own window, raylib's 3D view):
+-- its xbPlayFile makes the file its card script, as the Game Player does. Started if needed.
+command HT.RunXt3d
+   local tP, tStart, tCode, tReply, tName
+   put HT.Projects() into tP
+   if not HT.BenchAlive() then
+      if there is not a file (tP & "/" & kBenchExe) then
+         HT.Status "No xt3d games bench at" && tP & "/" & kBenchExe & " (xt3D_Raylib_Livecode_Bridge/standalone/README.md)"
+         exit HT.RunXt3d
+      end if
+      HT.Status "Starting the xt3d games bench..."
+      HT.Viewport "starting the xt3d games bench"
+      HT.StartExe tP & "/" & kBenchExe
+      put the milliseconds into tStart
+      repeat until HT.BenchAlive() or the milliseconds - tStart > 30000
+         set the cursor to busy
+         wait 500 milliseconds with messages
+      end repeat
+      if not HT.BenchAlive() then
+         HT.Status "The xt3d games bench did not answer on port" && kBenchPort && "within 30 seconds."
+         HT.Viewport empty
+         exit HT.RunXt3d
+      end if
+      wait 4 seconds with messages      -- it opens its window and raylib after its server
+   end if
+   put "HOWTO" && char 1 to 2 of line sTopic of sTopics & "." & sStep into tName
+   -- the bench window may have been closed while its server runs on: open it again
+   put "if there is not a stack" && quote & kBenchStack & quote && "or the mode of stack" && quote & kBenchStack & quote && "is 0 then" && \
+         "go stack" && quote & tP & "/" & kBenchScript & quote & return & \
+         "set the defaultStack to" && quote & kBenchStack & quote & return & \
+         "xbPlayFile" && quote & HT.StepFile(sStep, ".livecodescript") & quote & "," && quote & tName & quote & return & \
+         "return the result" into tCode
+   put HT.Bench("POST", "/run", tCode, 15000) into tReply
+   if tReply begins with "result:" then delete word 1 of tReply
+   if word 1 to -1 of tReply is not empty then
+      HT.Status "xt3d:" && tName && "did not start:" && line 1 to 3 of tReply
+      exit HT.RunXt3d
+   end if
+   put true into sXt3dOn
+   HT.Viewport "playing in the xt3d games bench window"
+   HT.Status "Running step" && sStep && "in the xt3d games bench (its own window). Escape there ends it; Stop here too."
+end HT.RunXt3d
+
+command HT.StartExe pPath
+   replace "/" with "\" in pPath
+   open process (quote & pPath & quote) for neither
+end HT.StartExe
+
+function HT.BenchToken
+   return line 1 of HT.ReadText("C:/LIB_MCP/devtoken_" & kBenchPort & ".txt")
+end HT.BenchToken
+
+function HT.BenchAlive
+   if HT.BenchToken() is empty then return false
+   return HT.Bench("GET", "/ping", empty, 1500) begins with "OK"
+end HT.BenchAlive
+
+function HT.Bench pMethod, pRoute, pBody, pTimeoutMs
+   return HT.Http(pMethod, pRoute, pBody, HT.BenchToken(), pTimeoutMs)
+end HT.Bench
+
+-- one request to the bench over a socket of our own (no shell; the window keeps working
+-- while it waits). Same as LIB_DEV/livecode/game_browser.livecodescript GB.Http.
+function HT.Http pMethod, pRoute, pBody, pToken, pTimeoutMs
+   local tSock, tReq, tBytes, tStart, tState, tData, tAt
+   put "127.0.0.1:" & kBenchPort & "|ht" & the milliseconds into tSock
+   put textEncode(pBody, "UTF-8") into tBytes
+   put pMethod && pRoute && "HTTP/1.1" & crlf & "Host: 127.0.0.1:" & kBenchPort & crlf & \
+         "X-Token: " & pToken & crlf & "Connection: close" & crlf into tReq
+   if pMethod is "POST" then
+      put "Content-Type: text/plain; charset=utf-8" & crlf & \
+            "Content-Length: " & the number of bytes of tBytes & crlf after tReq
+   end if
+   put crlf after tReq
+   put empty into sHttp[tSock]["state"]
+   put empty into sHttp[tSock]["data"]
+   put textEncode(tReq, "UTF-8") & tBytes into sHttp[tSock]["send"]
+   put the milliseconds into tStart
+   open socket to tSock with message "HT.HttpOpen"
+   if the result is not empty then
+      delete variable sHttp[tSock]
+      return "(error:" && the result & ")"
+   end if
+   repeat until sHttp[tSock]["state"] is not empty or the milliseconds - tStart > pTimeoutMs
+      set the cursor to busy
+      wait 20 milliseconds with messages
+   end repeat
+   put sHttp[tSock]["state"] into tState
+   put sHttp[tSock]["data"] into tData
+   if tState is empty then
+      -- closed when it answers or fails (closing it now lets its late error hit the next one)
+      put "abandoned" into sHttp[tSock]["state"]
+      return "(no answer in" && pTimeoutMs && "ms)"
+   end if
+   delete variable sHttp[tSock]
+   close socket tSock
+   if tState begins with "error" then return "(" & tState & ")"
+   put offset(crlf & crlf, tData) into tAt
+   if tAt > 0 then delete char 1 to tAt + 3 of tData
+   return textDecode(tData, "UTF-8")
+end HT.Http
+
+on HT.HttpOpen pSock
+   if pSock is not among the lines of the keys of sHttp then exit HT.HttpOpen
+   if sHttp[pSock]["state"] is "abandoned" then
+      delete variable sHttp[pSock]
+      close socket pSock
+      exit HT.HttpOpen
+   end if
+   write sHttp[pSock]["send"] to socket pSock
+   read from socket pSock with message "HT.HttpRead"
+end HT.HttpOpen
+
+on HT.HttpRead pSock, pData
+   if pSock is not among the lines of the keys of sHttp then exit HT.HttpRead
+   if sHttp[pSock]["state"] is "abandoned" then exit HT.HttpRead
+   put pData after sHttp[pSock]["data"]
+   if HT.HttpComplete(sHttp[pSock]["data"]) then
+      put "done" into sHttp[pSock]["state"]
+   else
+      read from socket pSock with message "HT.HttpRead"
+   end if
+end HT.HttpRead
+
+on socketError pSock, pErr
+   if pSock is not among the lines of the keys of sHttp then pass socketError
+   if sHttp[pSock]["state"] is "abandoned" then
+      delete variable sHttp[pSock]
+   else
+      put "error" && pErr into sHttp[pSock]["state"]
+   end if
+end socketError
+
+on socketClosed pSock
+   if pSock is not among the lines of the keys of sHttp then pass socketClosed
+   if sHttp[pSock]["state"] is "abandoned" then
+      delete variable sHttp[pSock]
+   else
+      put "done" into sHttp[pSock]["state"]
+   end if
+end socketClosed
+
+-- the whole reply is in: the head, and as many body bytes as its Content-Length
+function HT.HttpComplete pData
+   local tAt, tHead, tLen, tLine
+   put offset(crlf & crlf, pData) into tAt
+   if tAt is 0 then return false
+   put char 1 to tAt of pData into tHead
+   replace numToChar(13) with empty in tHead
+   put empty into tLen
+   repeat for each line tLine in tHead
+      if tLine begins with "Content-Length:" then put word 2 of tLine into tLen
+   end repeat
+   if tLen is not an integer then return false
+   return the number of bytes of pData - (tAt + 3) >= tLen
+end HT.HttpComplete
 
 -------------------------------------------------------------------- small helpers
 
