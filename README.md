@@ -10,7 +10,7 @@ Step-by-step game building instructions for Vibecode3D and xt3d, one small step 
 | `topics/<id>_<Title>/` | one fundamental (the stack's left-side list): `step_<n>.txt` (words), `step_<n>.livecodescript` (the whole card script after that step; its header says what it adds) |
 | `games/<Game>/` | later: how a real game was built, cut into the same kind of steps |
 | `tests/play_step.sh` | plays one step on the REAL engine (Simple_Test1's window, its script swapped), lists the scene, takes a picture |
-| `livecode/` | the HOWTO stack and its syntax-colour library |
+| `livecode/` | `HOWTO.oxtstack`: open it in OXT-Beyond (a strip at the bottom of the screen; steps play in a Vibecode3D window and an xt3d window above it). `howto_stack.livecodescript` is its script's source: change the file, then set the stack's script from it |
 
 ## How it is made
 1. Spark (the local model) writes the big outline: `../LIB_SPARK/howto/` -> `OUTLINE.md`.
