@@ -1,25 +1,29 @@
 script "howto_stack"
 ######################################################################################
 ## HOWTO  (LIB_HOWTO, Opus 19 Nov 2026) -- the stack script of the HOWTO tutorial stack
-## Layout (PLAN.md): topics + steps on the left; engine toggle and the viewport top right;
-## the step's words and its code (syntax coloured, lines new in this step marked) bottom
-## right; < step / Run this step / Stop / step > below.
+## Layout (owner, 19 Nov evening): one wide strip low on the screen: topics | steps | the
+## step's words | its code (syntax coloured, lines new in this step marked); < step /
+## Run this step / Stop / step > and the engine toggle along the bottom. The games play in
+## their own windows above the strip: Vibecode3D on the left, xt3d on the right (side by
+## side, so both can be on at once). Floating windows: no placing over a scaled card.
 ## The stack holds NO lesson text: it reads LIB_HOWTO/topics/<id>_<Title>/step_<n>.txt
 ## (words) and step_<n>.livecodescript (the whole card script after that step).
 ## Run this step = the tests/play_step.sh trick: GL.Open opens the Game Player on
 ## Simple_Test1, the step's script replaces the card script before the player starts it,
-## and the window (no title bar) is laid exactly over the viewport.
+## and the window goes into its slot above the strip.
 ## HT.Build makes every control again from this script (template colours first).
 ######################################################################################
 
 constant kFallbackProjects = "//wsl$/Ubuntu/home/igame3d/projects"
 constant kPlay = "Play Simple_Test1"
--- xt3d (xRay): the games bench script opened as only its 3D view, on this stack's viewport
+-- xt3d (xRay): the games bench script opened as only its 3D view, in a window of its own
 constant kBenchScript = "xt3D_Raylib_Livecode_Bridge/testbench/xt3d_testBench_lib_mcp.livecodescript"
 constant kBenchStack = "xt3dTestBenchLibMCP"
-constant kW = 1280
-constant kH = 840
-constant kLeftW = 250
+constant kW = 1500
+constant kH = 360
+constant kLayout = 2      -- HT.Build again when an open stack has an older layout
+constant kTitleH = 31     -- a window's title bar (Windows, 125%)
+constant kGap = 10
 -- colours (dark mode)
 constant kPaper = "14,17,22"
 constant kPanel = "24,29,37"
@@ -38,15 +42,17 @@ local sStep        -- the chosen step number
 local sSteps       -- how many steps the chosen topic has
 local sEngine      -- "Vibecode3D" or "xt3d"
 local sDefined     -- handler names the shown script defines (cr list)
-local sXt3dOn      -- true while a step plays in the xt3d view
+local sXt3dOn      -- true while a step plays in the xt3d window
 
 -------------------------------------------------------------------- open / close
 
 on preOpenStack
-   if there is not a field "Code" of card 1 of me then HT.Build
-   -- owner, 19 Nov: big apps open at 200,32 at 0.95 scale, clear of the taskbar on 1536 x 864
-   set the scaleFactor of me to 0.95
-   set the topLeft of me to 200, 32
+   if the cLayout of me is not kLayout then HT.Build
+   -- the strip fits at full size: no scaleFactor (a scaled window is not drawn where its rect
+   -- says, 19 Nov). Low on the screen, the game windows go above it.
+   set the scaleFactor of me to 1
+   set the left of me to (item 3 of the screenRect - kW) div 2
+   set the bottom of me to item 4 of the screenRect - 8
    if sEngine is empty then put "Vibecode3D" into sEngine
    HT.ShowEngine
    HT.LoadTopics
@@ -57,7 +63,7 @@ on preOpenStack
    HT.ShowTopic sTopic, sStep
 end preOpenStack
 
--- LIB_ALPHA 12b: closing frees the stack; the step window goes with it
+-- LIB_ALPHA 12b: closing frees the stack; the game windows go with it
 on closeStackRequest
    HT.Stop
    HT.CloseXt3d
@@ -70,25 +76,6 @@ on closeStack
    HT.CloseXt3d
    pass closeStack
 end closeStack
-
--- the step window sits on the viewport: keep it there and in front
-on moveStack
-   if there is a stack kPlay then set the rect of stack kPlay to HT.ViewportOnScreen()
-   if HT.Xt3dOpen() then dispatch "xbViewOnlyPlace" to stack kBenchStack with HT.ViewportOnScreen()
-   pass moveStack
-end moveStack
-
-on resumeStack
-   if there is a stack kPlay or sXt3dOn is true then send "HT.Raise" to me in 20 milliseconds
-   pass resumeStack
-end resumeStack
-
-command HT.Raise
-   if there is a stack kPlay then
-      if the mode of stack kPlay is not 0 then go stack kPlay
-   end if
-   if sXt3dOn is true and HT.Xt3dOpen() then go stack kBenchStack
-end HT.Raise
 
 -------------------------------------------------------------------- clicks and keys
 
@@ -247,8 +234,7 @@ command HT.GoStep pStep
    HT.ShowCode
    set the enabled of graphic "Prev" of card 1 of me to (sStep > 1)
    set the enabled of graphic "Next" of card 1 of me to (sStep < sSteps)
-   HT.Viewport "Step" && sStep && "of" && sSteps & ". Press Run this step (or Return)."
-   HT.Status empty
+   HT.Status "Step" && sStep && "of" && sSteps & ": Run (or Return) plays it in" && sEngine & "."
 end HT.GoStep
 
 command HT.ShowWords
@@ -432,22 +418,24 @@ end HT.Hex
 
 -------------------------------------------------------------------- running a step
 
--- the viewport's rect in screen pixels
--- (the stack's scaleFactor shrinks it on screen: scale the card's offsets too)
-function HT.ViewportOnScreen
-   local tR, tS, tK
-   put the rect of graphic "Viewport" of card 1 of me into tR
-   put the rect of me into tS
-   put the scaleFactor of me into tK
-   if tK is not a number then put 1 into tK
-   return item 1 of tS + round((item 1 of tR + 1) * tK), item 2 of tS + round((item 2 of tR + 1) * tK), \
-         item 1 of tS + round((item 3 of tR - 1) * tK), item 2 of tS + round((item 4 of tR - 1) * tK)
-end HT.ViewportOnScreen
+-- where a game window goes: above the strip, "left" (Vibecode3D) or "right" (xt3d), as the
+-- rect of its card on screen (a window's title bar sits above that)
+function HT.Slot pSide
+   local tTop, tBottom, tW, tL
+   put item 2 of the windowBoundingRect + kTitleH + kGap into tTop
+   if tTop < kTitleH + kGap then put kTitleH + kGap into tTop
+   put the top of me - kTitleH - kGap into tBottom
+   put (kW - kGap) div 2 into tW
+   put the left of me into tL
+   if pSide is "right" then add tW + kGap to tL
+   return tL, tTop, tL + tW, tBottom
+end HT.Slot
 
 command HT.RunStep
    local tP, tWhy, tScript, tErr
    if sSteps < 1 then exit HT.RunStep
-   HT.Stop
+   -- only this engine's window starts again: the other one may stay beside it
+   HT.StopEngine sEngine
    put HT.Projects() into tP
    put HT.ReadText(HT.StepFile(sStep, ".livecodescript")) into tScript
    if tScript is empty then
@@ -479,38 +467,42 @@ command HT.RunStep
    end if
    set the uPrefix of stack kPlay to empty
    set the uGame of stack kPlay to "HOWTO" && sTopic & "." & sStep
-   set the decorations of stack kPlay to empty
-   set the rect of stack kPlay to HT.ViewportOnScreen()
-   set the title of stack kPlay to "FOR OWNER | HOWTO step"
-   HT.Viewport empty
-   HT.Status "Running step" && sStep & ". Escape pauses, ... (top right of the view) has Reset; Stop ends it."
+   set the rect of stack kPlay to HT.Slot("left")
+   set the title of stack kPlay to "FOR OWNER | HOWTO step" && sStep && "| Vibecode3D"
+   HT.Status "Step" && sStep && "plays in Vibecode3D (left). Stop ends it."
 end HT.RunStep
 
 command HT.Stop
-   if there is a stack kPlay then
-      if the mode of stack kPlay is not 0 then close stack kPlay
-   end if
-   if sXt3dOn is true then
+   HT.StopEngine "Vibecode3D"
+   HT.StopEngine "xt3d"
+end HT.Stop
+
+command HT.StopEngine pEngine
+   if pEngine is "Vibecode3D" then
+      if there is a stack kPlay then
+         if the mode of stack kPlay is not 0 then close stack kPlay
+      end if
+   else if sXt3dOn is true then
       put false into sXt3dOn
       if HT.Xt3dOpen() then
          dispatch "xbStopGame" to stack kBenchStack
          hide stack kBenchStack
       end if
    end if
-end HT.Stop
+end HT.StopEngine
 
 -------------------------------------------------------------------- running a step in xt3d
 
--- the xt3d games bench script, opened as only its 3D view (gXbViewRect) on the viewport:
--- raylib draws off-screen, each frame is copied into its image. Its xbPlayFile makes the
--- step file its card script, as the Game Player does. It stays open (hidden) between runs.
+-- the xt3d games bench script, opened as only its 3D view (gXbViewRect = its slot): raylib
+-- draws off-screen, each frame is copied into its image. Its xbPlayFile makes the step file
+-- its card script, as the Game Player does. It stays open (hidden) between runs.
 command HT.RunXt3d
    global gXbViewRect
    local tP, tName, tErr, tInfo
    put HT.Projects() into tP
    if not HT.Xt3dOpen() then
       HT.Status "Opening the xt3d view..."
-      put HT.ViewportOnScreen() into gXbViewRect
+      put HT.Slot("right") into gXbViewRect
       try
          go stack (tP & "/" & kBenchScript)
       catch tErr
@@ -526,8 +518,7 @@ command HT.RunXt3d
          exit HT.RunXt3d
       end if
    end if
-   set the title of stack kBenchStack to "FOR OWNER | HOWTO step xt3d"
-   dispatch "xbViewOnlyPlace" to stack kBenchStack with HT.ViewportOnScreen()
+   set the title of stack kBenchStack to "FOR OWNER | HOWTO step" && sStep && "| xt3d"
    show stack kBenchStack
    put "HOWTO" && char 1 to 2 of line sTopic of sTopics & "." & sStep into tName
    dispatch "xbPlayFile" to stack kBenchStack with HT.StepFile(sStep, ".livecodescript"), tName
@@ -539,15 +530,14 @@ command HT.RunXt3d
    end if
    put true into sXt3dOn
    go stack kBenchStack
-   HT.Viewport empty
-   HT.Status "Running step" && sStep && "in xt3d (xRay). Escape ends it; Stop too."
+   HT.Status "Step" && sStep && "plays in xt3d (right). Stop ends it."
 end HT.RunXt3d
 
--- is our xt3d view open (as a view: no window frame), not the owner's whole bench?
+-- is our xt3d view open (view only), not the owner's whole bench?
 function HT.Xt3dOpen
    if there is not a stack kBenchStack then return false
    if the mode of stack kBenchStack is 0 then return false
-   return the decorations of stack kBenchStack is empty
+   return the cViewOnly of stack kBenchStack is true
 end HT.Xt3dOpen
 
 -- the HOWTO stack closes: the xt3d view (and raylib) go with it
@@ -560,10 +550,6 @@ end HT.CloseXt3d
 command HT.Status pText
    put pText into field "Status" of card 1 of me
 end HT.Status
-
-command HT.Viewport pText
-   set the label of graphic "Viewport" of card 1 of me to pText
-end HT.Viewport
 
 command HT.ShowEngine
    if sEngine is "xt3d" then
@@ -592,47 +578,34 @@ command HT.Build
    set the foregroundColor of me to kInk
    set the textFont of me to "Segoe UI"
    set the textSize of me to 13
-   -- left: topics and steps
-   HT.MakeLabel "TopicsLabel", "TOPICS", 8, 8, kLeftW - 8, 30
-   HT.MakeList "Topics", 8, 32, kLeftW - 8, 470
-   HT.MakeLabel "StepsLabel", "STEPS", 8, 480, kLeftW - 8, 504
-   HT.MakeList "Steps", 8, 506, kLeftW - 8, kH - 8
-   -- right top: engine toggle and viewport
-   HT.MakeLabel "EngineLabel", "ENGINE", kLeftW + 8, 8, kLeftW + 80, 32
-   HT.MakeButton "EngineXT", "Vibecode3D", kLeftW + 84, 6, kLeftW + 204, 32
-   HT.MakeButton "EngineXRay", "xt3d", kLeftW + 210, 6, kLeftW + 290, 32
-   HT.MakeLabel "Hint", "Left / Right: steps    Up / Down: topics    Return: run", kLeftW + 300, 8, kW - 8, 32
-   set the textAlign of field "Hint" of card 1 of me to "right"
+   -- one strip: topics | steps | words | code; buttons and the engine toggle along the bottom
+   HT.MakeLabel "TopicsLabel", "TOPICS", 8, 6, 238, 28
+   HT.MakeList "Topics", 8, 30, 238, kH - 8
+   HT.MakeLabel "StepsLabel", "STEPS", 246, 6, 486, 28
+   HT.MakeList "Steps", 246, 30, 486, kH - 8
+   HT.MakeLabel "Hint", "Left / Right: steps    Up / Down: topics    Return: run", 494, 6, 914, 28
    set the foregroundColor of field "Hint" of card 1 of me to kDim
-   reset the templateGraphic
-   set the style of the templateGraphic to "rectangle"
-   set the filled of the templateGraphic to true
-   set the backgroundColor of the templateGraphic to "0,0,0"
-   set the foregroundColor of the templateGraphic to "60,70,85"
-   set the textColor of the templateGraphic to kDim
-   create graphic "Viewport"
-   set the rect of it to kLeftW + 8, 38, kW - 8, 470
-   set the showName of it to true
-   set the textSize of it to 15
-   -- right bottom: the step's words, the code, the buttons
-   HT.MakeField "Words", kLeftW + 8, 478, kW - 8, 574
+   HT.MakeField "Words", 494, 30, 914, kH - 46
    set the dontWrap of field "Words" of card 1 of me to false
-   HT.MakeLabel "CodeLabel", "CODE", kLeftW + 8, 578, kW - 8, 598
+   HT.MakeLabel "CodeLabel", "CODE", 922, 6, kW - 8, 28
    set the foregroundColor of field "CodeLabel" of card 1 of me to kDim
-   HT.MakeField "Code", kLeftW + 8, 600, kW - 8, kH - 46
+   HT.MakeField "Code", 922, 30, kW - 8, kH - 46
    set the textFont of field "Code" of card 1 of me to "Consolas"
    set the textSize of field "Code" of card 1 of me to 14
    set the fixedLineHeight of field "Code" of card 1 of me to true
    set the textHeight of field "Code" of card 1 of me to 18
    set the vScrollbar of field "Code" of card 1 of me to true
    set the backgroundColor of field "Code" of card 1 of me to "10,12,16"
-   HT.MakeButton "Prev", "<  step", kLeftW + 8, kH - 38, kLeftW + 108, kH - 8
-   HT.MakeButton "Run", "Run this step", kLeftW + 116, kH - 38, kLeftW + 266, kH - 8
-   HT.MakeButton "Stop", "Stop", kLeftW + 274, kH - 38, kLeftW + 354, kH - 8
-   HT.MakeButton "Next", "step  >", kLeftW + 362, kH - 38, kLeftW + 462, kH - 8
+   HT.MakeButton "Prev", "<  step", 494, kH - 38, 594, kH - 8
+   HT.MakeButton "Run", "Run this step", 602, kH - 38, 752, kH - 8
+   HT.MakeButton "Stop", "Stop", 760, kH - 38, 840, kH - 8
+   HT.MakeButton "Next", "step  >", 848, kH - 38, 948, kH - 8
    set the backgroundColor of graphic "Run" of card 1 of me to kOn
-   HT.MakeLabel "Status", empty, kLeftW + 474, kH - 36, kW - 8, kH - 10
+   HT.MakeLabel "Status", empty, 956, kH - 36, kW - 222, kH - 10
    set the foregroundColor of field "Status" of card 1 of me to kAccent
+   HT.MakeButton "EngineXT", "Vibecode3D", kW - 214, kH - 38, kW - 94, kH - 8
+   HT.MakeButton "EngineXRay", "xt3d", kW - 88, kH - 38, kW - 8, kH - 8
+   set the cLayout of me to kLayout
    unlock messages
    unlock screen
 end HT.Build
