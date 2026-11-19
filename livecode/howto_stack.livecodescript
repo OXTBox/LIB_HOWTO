@@ -63,6 +63,12 @@ on preOpenStack
    HT.ShowTopic sTopic, sStep
 end preOpenStack
 
+-- 19 Nov: opened from a script it once came up hidden (mode 1, visible false): always show it
+on openStack
+   if not the visible of me then show me
+   pass openStack
+end openStack
+
 -- LIB_ALPHA 12b: closing frees the stack; the game windows go with it
 on closeStackRequest
    HT.Stop
