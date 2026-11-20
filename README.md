@@ -58,3 +58,9 @@ the step files are the source), `../LIB_SPARK/howto/run_steps.py` (Spark's words
 Dark mode. Topic list on the left on every card; the Vibecode3D and xt3d viewports share the
 right side (a toggle picks the engine); the step's code in a scrolling, syntax-coloured field
 at the bottom right.
+
+## Licence
+
+GPL-3.0 (see `LICENSE`), because the xTalk work here is built on the GPL-licensed LiveCode Community 9 engine. Copyright (c) 2026 xAction.
+
+The Python files (`.py`) and other material that is not xTalk are also offered under the MIT licence, Copyright (c) 2026 xAction: you may use them under either licence.
